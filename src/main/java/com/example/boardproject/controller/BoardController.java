@@ -38,7 +38,9 @@ public class BoardController {
     public String detail(@PathVariable("id")Long id,
                          Model model){
         try {
+            boardService.increaseHits(id);
             model.addAttribute("boardDetail", boardService.findById(id));
+            System.out.println(boardService.findById(id));
             return "/boardPages/boardDetail";
         }catch (NoSuchElementException e) {
             return "/boardPages/NotFound";

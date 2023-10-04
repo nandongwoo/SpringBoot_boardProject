@@ -1,14 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <th:block th:replace="~{component/config :: config}"></th:block>
 </head>
 <body>
-<div>
-    <table>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+<div id="section" class="container text-align-center">
+    <table class="table table-bordered">
+        <tr>
+            <td th:text="${boardDetail.id}"></td>
+            <td th:text="${boardDetail.boardTitle}"></td>
+            <td th:text="${boardDetail.boardWriter}"></td>
+            <td type="hidden" th:text="${boardDetail.boardPass}"></td>
+            <td th:text="${boardDetail.boardContents}"></td>
+            <td th:text="${boardDetail.boardHits}"></td>
+            <td th:text="${boardDetail.createdAt}"></td>
 
+        </tr>
     </table>
 </div>
+<div th:replace="~{component/footer :: footer}"></div>
 </body>
 </html>

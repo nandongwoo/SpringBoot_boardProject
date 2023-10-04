@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <th:block th:replace="~{component/config :: config}"></th:block>
 </head>
 <body>
-
-<div>
-    <table class="table table-hover text-center">
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+<div id="section" class="container text-align-center">
+    <table class="table table-bordered">
         <tr>
             <th>제목</th>
             <th>작성자</th>
@@ -18,9 +18,11 @@
             </td>
             <td th:text="${board.boardTitle}"></td>
             <td th:text="${board.boardWriter}"></td>
+            <td th:text="${board.boardHits}"></td>
+            <td th:text="${board.createdAt}"></td>
         </tr>
     </table>
 </div>
-
+<div th:replace="~{component/footer :: footer}"></div>
 </body>
 </html>

@@ -4,9 +4,11 @@ import com.example.boardproject.dto.BoardDTO;
 import com.example.boardproject.entity.BoardEntity;
 import com.example.boardproject.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +43,10 @@ public class BoardService {
     }
 
     public List<BoardDTO> findAll() {
+//        List<BoardEntity> boardEntityList = boardRepository.findAll(Sort.by(Sort.Direction.DESC,"id"));
+//        Sort정렬 기준
+
+
         List<BoardDTO> boardDTOList = new ArrayList<>();
         for (BoardEntity boardEntity : boardRepository.findAll()){
             BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
@@ -51,6 +57,17 @@ public class BoardService {
 
     public Object findById(Long id) {
         return BoardDTO.toBoardDTO(boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException()));
+    }
+
+    /**
+     * 서비스 클래스 메서드에서 @Transactional 붙이는 경우
+     * 1. jpql로 작성한 메서드 호출할 때
+     * 2. 부모엔티티에서 자식엔티티를 바로 호출할 때
+     */
+
+    @Transactional
+    public void increaseHits(Long id) {
+        boardRepository.increaseHist(id);
     }
 }
 

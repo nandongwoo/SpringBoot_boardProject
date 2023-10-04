@@ -29,7 +29,7 @@ public class BoardEntity extends BaseEntity{
     private String boardContents;
 
     @Column
-    private int boardHit;
+    private int boardHits;
 
 
     public static BoardEntity toSaveEntity(BoardDTO boardDTO){

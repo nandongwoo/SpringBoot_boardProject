@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>글작성</title>
+    <th:block th:replace="~{component/config :: config}"></th:block>
 </head>
 <body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
 <form action="/board/save" method="post">
     <input name="boardTitle" type="text" placeholder="글제목">
     <input name="boardWriter" type="text" placeholder="작성자">
@@ -14,4 +15,5 @@
     <input type="submit" value="글작성">
 </form>
 </body>
+<div th:replace="~{component/footer :: footer}"></div>
 </html>

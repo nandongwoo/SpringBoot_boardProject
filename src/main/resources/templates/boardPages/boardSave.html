@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>글작성</title>
+</head>
+<body>
+<form action="/board/save" method="post">
+    <input name="boardTitle" type="text" placeholder="글제목">
+    <input name="boardWriter" type="text" placeholder="작성자">
+    <input name="boardPass" type="password" placeholder="비밀번호">
+    <input name="boardContents" type="text" placeholder="글내용">
+<!--    파일 선택 : <input name="boardFileName" type="file" multiple>-->
+    <input type="submit" value="글작성">
+</form>
+</body>
+</html>

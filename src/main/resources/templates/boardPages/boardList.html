@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div>
+    <table class="table table-hover text-center">
+        <tr>
+            <th>제목</th>
+            <th>작성자</th>
+        </tr>
+        <tr th:each="board : ${boardList}">
+            <td>
+                <a th:href="@{|/board/detail/${board.id}|}" th:text="${board.id}"></a>
+            </td>
+            <td th:text="${board.boardTitle}"></td>
+            <td th:text="${board.boardWriter}"></td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

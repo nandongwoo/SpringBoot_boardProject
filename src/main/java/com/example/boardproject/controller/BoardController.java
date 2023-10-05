@@ -3,6 +3,8 @@ package com.example.boardproject.controller;
 import com.example.boardproject.dto.BoardDTO;
 import com.example.boardproject.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,11 +48,20 @@ public class BoardController {
         }
     }
 
-//    @GetMapping("/update/{id}")
-//    public String update(@PathVariable("id")Long id,
-//                         Model model){
-//        return "redirect:/board";
+    // 1. 주소로 요청
+    @GetMapping("/delete/{id}")
+    public String update(@PathVariable("id")Long id,
+                         Model model){
+        boardService.delete(id);
+        return "redirect:/board";
+    }
+    // 2. axios로 요청
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity deleteByAxios(@PathVariable("id") Long id){
+//        boardService.delete(id);
+//        return new ResponseEntity<>(HttpStatus.OK);
 //    }
+
 
 }
 

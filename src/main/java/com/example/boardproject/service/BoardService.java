@@ -69,6 +69,10 @@ public class BoardService {
     public void increaseHits(Long id) {
         boardRepository.increaseHist(id);
     }
+
+    public void delete(Long id) {
+        boardRepository.deleteById(id);
+    }
 }
 
 

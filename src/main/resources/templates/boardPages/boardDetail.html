@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <th:block th:replace="~{component/config :: config}"></th:block>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
 <div th:replace="~{component/header :: header}"></div>
@@ -16,10 +17,44 @@
             <td th:text="${boardDetail.boardContents}"></td>
             <td th:text="${boardDetail.boardHits}"></td>
             <td th:text="${boardDetail.createdAt}"></td>
-
         </tr>
     </table>
+    <div id="btn-area">
+        <button class="btn btn-primary" onclick="list_fn()">목록</button>
+        <button class="btn btn-warning" onclick="passCheck()">수정</button>
+        <button class="btn btn-danger" onclick="passCheck()">삭제</button>
+    </div>
+    <div id="password" name="password" style=" display: none">
+        <input id="passCheck" name="passCheck" type="password">
+        <button onclick="update_fn()">수정</button>
+        <button onclick="delete_fn()">삭제</button>
+    </div>
+
+
 </div>
 <div th:replace="~{component/footer :: footer}"></div>
 </body>
+<script th:inline="javascript">
+    const passCheck = () => {
+        const passCheck = document.getElementById("password")
+        passCheck.style.display = ""
+    }
+    const update_fn = () => {
+        const passCheck = document.getElementById("passCheck").value;
+        if (passCheck == [[${boardDetail.boardPass}]]) {
+            location.href = "/board/update/"+[[${boardDetail.id}]];
+        }else{
+            alert("비밀번호를 확인하세요")
+        }
+    }
+    const delete_fn = () => {
+        const passCheck = document.getElementById("passCheck").value;
+        if (passCheck == [[${boardDetail.boardPass}]]) {
+            location.href = "/board/delete/"+[[${boardDetail.id}]];
+        }else{
+            alert("비밀번호를 확인하세요")
+        }
+    }
+
+</script>
 </html>

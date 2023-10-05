@@ -40,13 +40,17 @@ public class BoardController {
         try {
             boardService.increaseHits(id);
             model.addAttribute("boardDetail", boardService.findById(id));
-            System.out.println(boardService.findById(id));
             return "/boardPages/boardDetail";
         }catch (NoSuchElementException e) {
             return "/boardPages/NotFound";
         }
     }
 
+//    @GetMapping("/update/{id}")
+//    public String update(@PathVariable("id")Long id,
+//                         Model model){
+//        return "redirect:/board";
+//    }
 
 }
 

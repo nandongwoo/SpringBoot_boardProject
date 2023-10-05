@@ -47,6 +47,14 @@
                 location.href = "/board/update/" + [[${boardDetail.id}]];
             } else if (type == "delete") {
                 location.href = "/board/delete/" + [[${boardDetail.id}]];
+                axios({
+                    method: "delete",
+                    url: `/board/${id}`
+                }).then(res => {
+                    location.href = "/board";
+                }).catch(err => {
+                    alert("삭제 실패!");
+                });
             }
         } else {
             alert("비밀번호를 확인하세요")

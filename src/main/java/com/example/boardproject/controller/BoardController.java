@@ -3,6 +3,7 @@ package com.example.boardproject.controller;
 import com.example.boardproject.dto.BoardDTO;
 import com.example.boardproject.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,11 +30,34 @@ public class BoardController {
         boardService.save(boardDTO);
         return "redirect:/board";
     }
+    /*
+         rest api
+         /board/10 => 10번글
+         /board/20 => 20번글
+         /member/5 => 5번회원
 
+         3페이지에 있는 15번글
+         /board/3/15
+         /board/15?page=3
+     */
     @GetMapping
-    public String list(Model model){
-        model.addAttribute("boardList", boardService.findAll());
-        return "/boardPages/boardList";
+    public String list(Model model,
+                          @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+        Page<BoardDTO> boardDTOList = boardService.findAll(page);
+        model.addAttribute("boardList", boardDTOList);
+        // 목록 하단에 보여줄 페이지 번호
+        int blockLimit = 3;
+        int startPage = (((int) (Math.ceil((double) page / blockLimit))) - 1) * blockLimit + 1;
+        int endPage = ((startPage + blockLimit - 1) < boardDTOList.getTotalPages()) ? startPage + blockLimit - 1 : boardDTOList.getTotalPages();
+//        if ((startPage + blockLimit - 1) < boardDTOList.getTotalPages()) {
+//            endPage = startPage + blockLimit - 1;
+//        } else {
+//            endPage = boardDTOList.getTotalPages();
+//        }
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
+        return "boardPages/boardList";
     }
 
     @GetMapping("/detail/{id}")
@@ -74,8 +98,6 @@ public class BoardController {
         boardService.update(boardDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
 }
 
 

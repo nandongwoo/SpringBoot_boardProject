@@ -33,6 +33,10 @@
 <div th:replace="~{component/footer :: footer}"></div>
 </body>
 <script th:inline="javascript">
+    const list_fn = () => {
+        location.href = "/board"
+    }
+
     const passCheck = (type) => {
         console.log(`type : ${type}`);
         document.querySelector("#pass-check").innerHTML =

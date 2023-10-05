@@ -3,7 +3,10 @@ package com.example.boardproject.service;
 import com.example.boardproject.dto.BoardDTO;
 import com.example.boardproject.entity.BoardEntity;
 import com.example.boardproject.repository.BoardRepository;
+import com.example.boardproject.util.UtilClass;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,17 +45,19 @@ public class BoardService {
 //        }
     }
 
-    public List<BoardDTO> findAll() {
-//        List<BoardEntity> boardEntityList = boardRepository.findAll(Sort.by(Sort.Direction.DESC,"id"));
-//        Sort정렬 기준
-
-
-        List<BoardDTO> boardDTOList = new ArrayList<>();
-        for (BoardEntity boardEntity : boardRepository.findAll()){
-            BoardDTO boardDTO = BoardDTO.toBoardDTO(boardEntity);
-            boardDTOList.add(boardDTO);
-        }
-        return boardDTOList;
+    public Page<BoardDTO> findAll(int page) {
+        page = page - 1;
+        int pageLimit = 5;
+        Page<BoardEntity> boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        Page<BoardDTO> boardList = boardEntities.map(boardEntity ->
+                BoardDTO.builder()
+                        .id(boardEntity.getId())
+                        .boardTitle(boardEntity.getBoardTitle())
+                        .boardWriter(boardEntity.getBoardWriter())
+                        .boardHits(boardEntity.getBoardHits())
+                        .createdAt(UtilClass.dataTimeFormat(boardEntity.getCreatedAt()))
+                        .build());
+        return boardList;
     }
 
     public BoardDTO findById(Long id) {

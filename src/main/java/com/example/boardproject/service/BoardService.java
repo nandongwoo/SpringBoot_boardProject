@@ -55,7 +55,7 @@ public class BoardService {
         return boardDTOList;
     }
 
-    public Object findById(Long id) {
+    public BoardDTO findById(Long id) {
         return BoardDTO.toBoardDTO(boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException()));
     }
 
@@ -72,6 +72,11 @@ public class BoardService {
 
     public void delete(Long id) {
         boardRepository.deleteById(id);
+    }
+
+    public void update(BoardDTO boardDTO) {
+        BoardEntity boardEntity = BoardEntity.toUpdateEntity(boardDTO);
+        boardRepository.save(boardEntity);
     }
 }
 

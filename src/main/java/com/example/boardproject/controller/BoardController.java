@@ -50,8 +50,7 @@ public class BoardController {
 
     // 1. 주소로 요청
     @GetMapping("/delete/{id}")
-    public String update(@PathVariable("id")Long id,
-                         Model model){
+    public String delete(@PathVariable("id")Long id){
         boardService.delete(id);
         return "redirect:/board";
     }
@@ -61,6 +60,20 @@ public class BoardController {
 //        boardService.delete(id);
 //        return new ResponseEntity<>(HttpStatus.OK);
 //    }
+
+    @GetMapping("/update/{id}")
+    public String update(@PathVariable("id")Long id,
+                         Model model){
+        BoardDTO boardDTO = boardService.findById(id);
+        model.addAttribute("board", boardDTO);
+        return "/boardPages/boardUpdate";
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity update(@RequestBody BoardDTO boardDTO){
+        boardService.update(boardDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 
 }

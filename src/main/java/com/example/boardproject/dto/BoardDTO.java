@@ -22,9 +22,13 @@ public class BoardDTO {
     private String boardPass;
     private String boardContents;
     private String createdAt;
-    //    private List<MultipartFile> boardFileName;
     private int boardHits;
 
+
+    private MultipartFile boardFileName;
+    private int fileAttached;
+    private String originalFileName;
+    private String storedFileName;
 
     public static BoardDTO toBoardDTO(BoardEntity boardEntity) {
         BoardDTO boardDTO = new BoardDTO();
@@ -34,18 +38,17 @@ public class BoardDTO {
         boardDTO.setBoardContents(boardEntity.getBoardContents());
         boardDTO.setBoardHits(boardEntity.getBoardHits());
         boardDTO.setBoardPass(boardEntity.getBoardPass());
-//        boardDTO.setCreatedAt(boardEntity.getCreatedAt());
         boardDTO.setCreatedAt(UtilClass.dataTimeFormat(boardEntity.getCreatedAt()));
 
+        // 파일 첨부 여부에 따라 파일이름 가져가기
+        if (boardEntity.getFileAttached()==1){
+            boardDTO.setOriginalFileName(boardEntity.getBoardFileEntityList().get(0).getOriginalFileName());
+            boardDTO.setStoredFileName(boardEntity.getBoardFileEntityList().get(0).getStoredFileName());
+            boardDTO.setFileAttached(1);
+        }else {
+            boardDTO.setFileAttached(0);
+        }
 
-//        BoardDTO boardDTO = BoardDTO.builder()
-//                .id(boardEntity.getId())
-//                .boardWriter(boardEntity.getBoardWriter())
-//                .boardTitle(boardEntity.getBoardTitle())
-//                .boardPass(boardEntity.getBoardPass())
-//                .boardContents(boardEntity.getBoardContents())
-//                .createdAt(UtilClass.dataTimeFormat(boardEntity.getCreatedAt()))
-//                .build();
         return boardDTO;
     }
 }

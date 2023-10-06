@@ -24,31 +24,31 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
 //      @Query(value = "update board_table set board_hits+1 where id =: id", nativeQuery = true)
     void increaseHist(@Param("id") Long id);
 
-    // select * from board_table where board_title
+    //ex: select * from board_table where board_title
     List<BoardEntity> findByBoardTitle(String boardTitle);
 
 
-    // select * from board_table where board_title = ? order by id desc
+    //ex: select * from board_table where board_title = ? order by id desc
     List<BoardEntity> findByBoardTitleOrderById(String boardTitle);
 
 
-    // select * from board_table where board_title like '%q"
+    //ex: select * from board_table where board_title like '%q"
     List<BoardEntity> findByBoardTitleContaining(String q);
 
 
-    // select * from board_table where board_writer list '%q%'
+    //ex: select * from board_table where board_writer list '%q%'
     List<BoardEntity> findByBoardWriterContaining(String q);
 
 
-    // select * from board_table where board_title like '%q" order by id desc
+    //ex: select * from board_table where board_title like '%q" order by id desc
     List<BoardEntity> findByBoardTitleContainingOrderById(String q);
 
 
-    // 제목으로 검색한 결과를 page 객체로 리턴 (springframework에 있는 Pageable)
+    //ex: 제목으로 검색한 결과를 page 객체로 리턴 (springframework에 있는 Pageable)
     Page<BoardEntity> findByBoardTitleContaining(String q, Pageable pageable);
 
 
-    // 작성자로 검색한 결과를 Page 객체로 리턴
+    //ex: 작성자로 검색한 결과를 Page 객체로 리턴
     Page<BoardEntity> findByBoardWriterContaining(String q, Pageable pageable);
 
 

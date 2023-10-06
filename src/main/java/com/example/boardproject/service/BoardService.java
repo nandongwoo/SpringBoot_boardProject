@@ -2,6 +2,8 @@ package com.example.boardproject.service;
 
 import com.example.boardproject.dto.BoardDTO;
 import com.example.boardproject.entity.BoardEntity;
+import com.example.boardproject.entity.BoardFileEntity;
+import com.example.boardproject.repository.BoardFileRepository;
 import com.example.boardproject.repository.BoardRepository;
 import com.example.boardproject.util.UtilClass;
 import lombok.RequiredArgsConstructor;
@@ -14,41 +16,62 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final BoardFileRepository boardFileRepository;
 
-    public Long save(BoardDTO boardDTO) {
-//        if (boardDTO.getBoardFileName().get(0).isEmpty()) {
+    public Long save(BoardDTO boardDTO) throws IOException {
+        if (boardDTO.getBoardFileName().isEmpty()) {
+            // 첨부파일 없음
             BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO);
             return boardRepository.save(boardEntity).getId();
-//        }
-//        else {
-//            BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO);
-//            Long boardId = boardRepository.save(boardEntity).getId();
-//            for (MultipartFile boardFile : boardDTO.getBoardFileName()) {
-//                String originalFileName = boardFile.getOriginalFilename();
-//                String storedFileName = System.currentTimeMillis() + "-" + originalFileName;
-//
-//                BoardFileEntity boardFileEntity = BoardFileEntity.toSaveBoardFile(boardId, originalFileName,storedFileName);
-//
-//                String savePath = "D:\\springBoot_board_img\\" + storedFileName;
-//                boardFile.transferTo(new File(savePath));
-//                boardRepository.save(boardFileEntity);
-//
-//            }
-//        }
+        } else {
+            // 첨부파일 있음
+            BoardEntity boardEntity = BoardEntity.toSaveEntityWithFile(boardDTO);
+            // 게시글 저장처리 후 저장한 엔티티를 가져옴
+            BoardEntity savedEntity = boardRepository.save(boardEntity);
+            // 파일 이름 처리, 파일 로컬에 저장 등
+            // DTO에 담긴 파일 꺼내기
+            MultipartFile boardFile = boardDTO.getBoardFileName();
+            // 업로드한 파일 이름
+            String originalFileName =boardFile.getOriginalFilename();
+            // 저장용 파일 이름
+            String storedFileName = System.currentTimeMillis() + "-" + originalFileName;
+            // 저장경로 + 파일이름 준비
+            String savePath = "D:\\springBoot_img\\" + storedFileName;
+            // 파일 폴더에 저장
+            boardFile.transferTo(new File(savePath));
+            // 파일 정보 board_file_table에 저장
+            // 파일 정보 저장을 위한 BoardFileEntity 생성
+            BoardFileEntity boardFileEntity =
+                    BoardFileEntity.toSaveBoardFile(savedEntity, originalFileName, storedFileName);
+            boardFileRepository.save(boardFileEntity);
+            return savedEntity.getId();
+        }
     }
 
-    public Page<BoardDTO> findAll(int page) {
+
+
+    public Page<BoardDTO> findAll(int page, String type, String q) {
         page = page - 1;
         int pageLimit = 5;
-        Page<BoardEntity> boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        Page<BoardEntity> boardEntities = null;
+        // 검색인지 구분
+        if (q.equals("")) {
+            // 일반 페이징
+            boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        } else {
+            if (type.equals("boardTitle")) {
+                boardEntities = boardRepository.findByBoardTitleContaining(q, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            } else if (type.equals("boardWriter")) {
+                boardEntities = boardRepository.findByBoardWriterContaining(q, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+            }
+        }
+
         Page<BoardDTO> boardList = boardEntities.map(boardEntity ->
                 BoardDTO.builder()
                         .id(boardEntity.getId())
@@ -60,6 +83,7 @@ public class BoardService {
         return boardList;
     }
 
+    @Transactional
     public BoardDTO findById(Long id) {
         return BoardDTO.toBoardDTO(boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException()));
     }

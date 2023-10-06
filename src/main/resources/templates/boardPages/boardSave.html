@@ -6,12 +6,12 @@
 <body>
 <div th:replace="~{component/header :: header}"></div>
 <div th:replace="~{component/nav :: nav}"></div>
-<form action="/board/save" method="post">
+<form action="/board/save" method="post" class="row g-3" enctype="multipart/form-data">
     <input name="boardTitle" type="text" placeholder="글제목">
     <input name="boardWriter" type="text" placeholder="작성자">
     <input name="boardPass" type="password" placeholder="비밀번호">
-    <input name="boardContents" type="text" placeholder="글내용">
-<!--    파일 선택 : <input name="boardFileName" type="file" multiple>-->
+    <textarea name="boardContents" type="text" placeholder="내용" cols="30" rows="10"?></textarea>
+    파일 선택 : <input name="boardFileName" type="file" multiple>
     <input type="submit" value="글작성">
 </form>
 </body>

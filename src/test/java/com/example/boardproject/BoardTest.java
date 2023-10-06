@@ -2,6 +2,7 @@ package com.example.boardproject;
 
 import com.example.boardproject.dto.BoardDTO;
 import com.example.boardproject.entity.BoardEntity;
+import com.example.boardproject.entity.BoardFileEntity;
 import com.example.boardproject.repository.BoardRepository;
 import com.example.boardproject.service.BoardService;
 import com.example.boardproject.util.UtilClass;
@@ -13,7 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -41,7 +45,11 @@ public class BoardTest {
         IntStream.rangeClosed(1, 50).forEach(i -> {
             BoardDTO boardDTO = testBoard(i);
             ;
-            boardService.save(boardDTO);
+            try {
+                boardService.save(boardDTO);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
@@ -119,4 +127,24 @@ public class BoardTest {
         System.out.println("boardList.isFirst() = " + boardList.isFirst()); // 첫페이지인지 여부
         System.out.println("boardList.isLast() = " + boardList.isLast()); // 마지막페이지인지 여부
     }
+
+
+
+    @Test
+    @Transactional // 부모 Entity에서 자식 Entity를 조회하는 상황
+    @DisplayName("참조관계 확인")
+    public void findTest(){
+        // BoardEntity 조회
+        Optional<BoardEntity> boardEntityOptional = boardRepository.findById(55L);
+        BoardEntity boardEntity = boardEntityOptional.get();
+        // BoardEntity에서 BoardFileEntity 조회
+        List<BoardFileEntity> boardFileEntityList = boardEntity.getBoardFileEntityList();
+        boardFileEntityList.forEach(boardFileEntity -> {
+            System.out.println(boardFileEntity.getOriginalFileName());
+            System.out.println(boardFileEntity.getStoredFileName());
+        });
+
+
+    }
+
 }

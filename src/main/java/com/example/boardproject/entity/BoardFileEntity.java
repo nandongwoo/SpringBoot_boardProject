@@ -1,32 +1,35 @@
-//package com.example.boardproject.entity;
-//
-//import lombok.AccessLevel;
-//import lombok.Getter;
-//import lombok.Setter;
-//
-//import javax.persistence.*;
-//
-//@Entity
-//@Getter
-//@Setter(AccessLevel.PRIVATE)
-//@Table(name = "board_File_Table")
-//public class BoardFileEntity {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//    @Column
-//    private Long boardId;
-//    @Column
-//    private String originalFileName;
-//    @Column
-//    private String storedFileName;
-//
-//
-//    public static BoardFileEntity toSaveBoardFile(Long boardId,String originalFileName, String storedFileName){
-//        BoardFileEntity boardFileEntity = new BoardFileEntity();
-//        boardFileEntity.setBoardId(boardId);
-//        boardFileEntity.setOriginalFileName(originalFileName);
-//        boardFileEntity.setStoredFileName(storedFileName);
-//        return boardFileEntity;
-//    }
-//}
+package com.example.boardproject.entity;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+
+@Entity
+@Getter
+@Setter(AccessLevel.PRIVATE)
+@Table(name = "board_File_Table")
+public class BoardFileEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    //
+    @ManyToOne(fetch = FetchType.LAZY) //다대일 = boardFileTalbe이 "다" boardTalbe이 "일" /  하나의 게시물에 여러개의 파일 o / 여러개의 게시물에 하나의 파일 x
+    @JoinColumn(name = "board_id") // DB에 생성 될 참조 컬럼의 이름
+    private BoardEntity boardEntity; // 부모 엔티티 타입으로 정의
+
+    @Column
+    private String originalFileName;
+    @Column
+    private String storedFileName;
+
+
+    public static BoardFileEntity toSaveBoardFile(BoardEntity savedEntity,String originalFileName, String storedFileName){
+        BoardFileEntity boardFileEntity = new BoardFileEntity();
+        boardFileEntity.setBoardEntity(savedEntity);
+        boardFileEntity.setOriginalFileName(originalFileName);
+        boardFileEntity.setStoredFileName(storedFileName);
+        return boardFileEntity;
+    }
+}

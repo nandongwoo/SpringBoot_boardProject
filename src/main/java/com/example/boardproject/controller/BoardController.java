@@ -26,10 +26,11 @@ public class BoardController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute BoardDTO boardDTO){
+    public String save(@ModelAttribute BoardDTO boardDTO) throws IOException{
         boardService.save(boardDTO);
         return "redirect:/board";
     }
+
     /*
          rest api
          /board/10 => 10번글
@@ -41,40 +42,49 @@ public class BoardController {
          /board/15?page=3
      */
     @GetMapping
-    public String list(Model model,
-                          @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
-        Page<BoardDTO> boardDTOList = boardService.findAll(page);
-        model.addAttribute("boardList", boardDTOList);
-        // 목록 하단에 보여줄 페이지 번호
+    public String findAll(Model model,
+                          @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                          @RequestParam(value = "type", required = false, defaultValue = "boardTitle") String type,
+                          @RequestParam(value = "q", required = false, defaultValue = "") String q) {
+        Page<BoardDTO> boardDTOList = boardService.findAll(page, type, q);
+
         int blockLimit = 3;
         int startPage = (((int) (Math.ceil((double) page / blockLimit))) - 1) * blockLimit + 1;
         int endPage = ((startPage + blockLimit - 1) < boardDTOList.getTotalPages()) ? startPage + blockLimit - 1 : boardDTOList.getTotalPages();
-//        if ((startPage + blockLimit - 1) < boardDTOList.getTotalPages()) {
-//            endPage = startPage + blockLimit - 1;
-//        } else {
-//            endPage = boardDTOList.getTotalPages();
-//        }
+
+        model.addAttribute("boardList", boardDTOList);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
+        model.addAttribute("page", page);
+        model.addAttribute("type", type);
+        model.addAttribute("q", q);
 
         return "boardPages/boardList";
     }
 
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable("id")Long id,
-                         Model model){
-        try {
-            boardService.increaseHits(id);
-            model.addAttribute("boardDetail", boardService.findById(id));
-            return "/boardPages/boardDetail";
-        }catch (NoSuchElementException e) {
-            return "/boardPages/NotFound";
-        }
+    public String detail(@PathVariable("id") Long id,
+                         @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                         @RequestParam(value = "type", required = false, defaultValue = "boardTitle") String type,
+                         @RequestParam(value = "q", required = false, defaultValue = "") String q,
+                         Model model) {
+
+            try {
+                boardService.increaseHits(id);
+                model.addAttribute("boardDetail", boardService.findById(id));
+                model.addAttribute("page", page);
+                model.addAttribute("type", type);
+                model.addAttribute("q", q);
+                return "/boardPages/boardDetail";
+            } catch (NoSuchElementException e) {
+                return "/boardPages/NotFound";
+            }
+
     }
 
     // 1. 주소로 요청
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id")Long id){
+    public String delete(@PathVariable("id") Long id) {
         boardService.delete(id);
         return "redirect:/board";
     }
@@ -86,15 +96,15 @@ public class BoardController {
 //    }
 
     @GetMapping("/update/{id}")
-    public String update(@PathVariable("id")Long id,
-                         Model model){
+    public String update(@PathVariable("id") Long id,
+                         Model model) {
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("board", boardDTO);
         return "/boardPages/boardUpdate";
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@RequestBody BoardDTO boardDTO){
+    public ResponseEntity update(@RequestBody BoardDTO boardDTO) {
         boardService.update(boardDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }

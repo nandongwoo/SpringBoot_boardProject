@@ -17,12 +17,12 @@
             <td th:text="${boardDetail.boardContents}"></td>
             <td th:text="${boardDetail.boardHits}"></td>
             <td th:text="${boardDetail.createdAt}"></td>
+        </tr>
         <tr th:if="${boardDetail.fileAttached == 1}">
             <th>image</th>
             <td th:each="fileName: ${boardDetail.storedFileName}">
                 <img th:src="@{|/upload/${fileName}}" width="200" height="200" alt="">
             </td>
-        </tr>
         </tr>
     </table>
     <div id="btn-area">

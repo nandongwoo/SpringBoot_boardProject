@@ -25,7 +25,7 @@ public class BoardService {
     private final BoardFileRepository boardFileRepository;
 
     public Long save(BoardDTO boardDTO) throws IOException {
-        if (boardDTO.getBoardFileName().isEmpty()) {
+        if (boardDTO.getBoardFileName().get(0).isEmpty()) {
             // 첨부파일 없음
             BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO);
             return boardRepository.save(boardEntity).getId();
@@ -36,21 +36,24 @@ public class BoardService {
             BoardEntity savedEntity = boardRepository.save(boardEntity);
             // 파일 이름 처리, 파일 로컬에 저장 등
             // DTO에 담긴 파일 꺼내기
-            MultipartFile boardFile = boardDTO.getBoardFileName();
-            // 업로드한 파일 이름
-            String originalFileName =boardFile.getOriginalFilename();
-            // 저장용 파일 이름
-            String storedFileName = System.currentTimeMillis() + "-" + originalFileName;
-            // 저장경로 + 파일이름 준비
-            String savePath = "D:\\springBoot_img\\" + storedFileName;
-            // 파일 폴더에 저장
-            boardFile.transferTo(new File(savePath));
-            // 파일 정보 board_file_table에 저장
-            // 파일 정보 저장을 위한 BoardFileEntity 생성
-            // 자식 Entity를 저장할 땐 부모 Entity가 있어야한다
-            BoardFileEntity boardFileEntity =
-                    BoardFileEntity.toSaveBoardFile(savedEntity, originalFileName, storedFileName);
-            boardFileRepository.save(boardFileEntity);
+            for (MultipartFile boardFile : boardDTO.getBoardFileName()) {
+
+
+                // 업로드한 파일 이름
+                String originalFileName = boardFile.getOriginalFilename();
+                // 저장용 파일 이름
+                String storedFileName = System.currentTimeMillis() + "-" + originalFileName;
+                // 저장경로 + 파일이름 준비
+                String savePath = "D:\\springBoot_img\\" + storedFileName;
+                // 파일 폴더에 저장
+                boardFile.transferTo(new File(savePath));
+                // 파일 정보 board_file_table에 저장
+                // 파일 정보 저장을 위한 BoardFileEntity 생성
+                // 자식 Entity를 저장할 땐 부모 Entity가 있어야한다
+                BoardFileEntity boardFileEntity =
+                        BoardFileEntity.toSaveBoardFile(savedEntity, originalFileName, storedFileName);
+                boardFileRepository.save(boardFileEntity);
+            }
             return savedEntity.getId();
         }
     }

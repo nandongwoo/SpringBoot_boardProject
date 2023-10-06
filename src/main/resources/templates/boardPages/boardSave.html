@@ -11,8 +11,8 @@
     <input name="boardWriter" type="text" placeholder="작성자">
     <input name="boardPass" type="password" placeholder="비밀번호">
     <textarea name="boardContents" type="text" placeholder="내용" cols="30" rows="10"?></textarea>
-    파일 선택 : <input name="boardFileName" type="file" multiple>
-    <input type="submit" value="글작성">
+    파일 선택 : <input name="boardFileName" type="file" class="form-control" multiple >
+    <input type="submit" value="글작성" class="btn btn-primary">
 </form>
 </body>
 <div th:replace="~{component/footer :: footer}"></div>

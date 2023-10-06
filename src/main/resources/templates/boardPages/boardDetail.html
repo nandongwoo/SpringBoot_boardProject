@@ -34,11 +34,69 @@
     <div id="pass-check" class="mt-3">
 
     </div>
-
 </div>
+<br><br>
+<div>
+    <form>
+        <input id="commentWriter" name="commentWriter" type="text" placeholder="작성자">
+        <input id= "commentContents" name="commentContents" type="text" placeholder="내용">
+        <input type="button" value="댓글작성" class="btn btn-primary" th:onclick="comment_fn([[${boardDetail.id}]])">
+    </form>
+</div>
+<div class="container text-align-center">
+    <table class="table table-bordered" id="commentSection">
+        <tr>
+<!--            <td th:text="${comment.commentWriter}"></td>-->
+<!--            <td th:text="${comment.commentContents}"></td>-->
+        </tr>
+    </table>
+</div>
+
+<!--<div>-->
+<!--    <table class="table table-striped" id="commentTable">-->
+<!--        -->
+<!--    </table>-->
+<!--</div>-->
 <div th:replace="~{component/footer :: footer}"></div>
 </body>
 <script th:inline="javascript">
+    const comment_fn = (boardId) => {
+        const commentWriter = document.getElementById("commentWriter").value;
+        const commentContents = document.getElementById("commentContents").value;
+        const commentSection = document.getElementById("commentSection");
+        console.log(boardId);
+        console.log(commentWriter);
+        console.log(commentContents);
+        axios({
+            method : "post",
+            url : "/comment/save",
+            data : {
+                commentWriter : commentWriter,
+                commentContents : commentContents,
+                boardId : boardId
+            },
+        }).then(res => {
+            let output =     "    <table class=\"table table-bordered\" id=\"commentSection\">\n";
+            console.log(res);
+            for (let i in res.data) {
+
+                output += "    <tr>\n";
+                output += "        <td>" + res.data[i].commentWriter + "</td>\n";
+                output += "        <td>" + res.data[i].commentContents + "</td>\n";
+                output += "    </tr>\n";
+            }
+                output += "</table>";
+            commentSection.innerHTML = output;
+            commentWriter.value = "";
+            commentContents.value = "";
+        }).catch(err => {
+            console.log("err", err);
+            commentSection.innerHTML = "조회결과가 없습니다";
+        })
+    }
+
+
+
     const list_fn = () => {
         const page = [[${page}]]
         const type = [[${type}]]

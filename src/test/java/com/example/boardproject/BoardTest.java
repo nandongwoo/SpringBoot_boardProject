@@ -137,9 +137,20 @@ public class BoardTest {
         // BoardEntity 조회
         Optional<BoardEntity> boardEntityOptional = boardRepository.findById(55L);
         BoardEntity boardEntity = boardEntityOptional.get();
+
+
+
+
+
         // BoardEntity에서 BoardFileEntity 조회
         List<BoardFileEntity> boardFileEntityList = boardEntity.getBoardFileEntityList();
+        // (id가 55인) boardEntity(부모)의 필드 boardFileEntityList값과 참조되어있는
+        // boardFileEntity의(자식) 값을 모두 불러온다.
+
+
         boardFileEntityList.forEach(boardFileEntity -> {
+            System.out.println(boardFileEntity.getId());
+            System.out.println(boardFileEntity.getBoardEntity().getId());
             System.out.println(boardFileEntity.getOriginalFileName());
             System.out.println(boardFileEntity.getStoredFileName());
         });

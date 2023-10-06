@@ -50,6 +50,7 @@ public class BoardService {
                 // 파일 정보 board_file_table에 저장
                 // 파일 정보 저장을 위한 BoardFileEntity 생성
                 // 자식 Entity를 저장할 땐 부모 Entity가 있어야한다
+                // 자식의Entity의 필드를 부모의 Entity 객체로 설정해놨기 때문
                 BoardFileEntity boardFileEntity =
                         BoardFileEntity.toSaveBoardFile(savedEntity, originalFileName, storedFileName);
                 boardFileRepository.save(boardFileEntity);
